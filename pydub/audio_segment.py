@@ -582,6 +582,13 @@ class AudioSegment(object):
         conversion_command = [cls.converter,
                               '-y',  # always overwrite existing files
                               ]
+ 
+        if start_second is not None:
+            conversion_command += ["-ss", str(start_second)]
+
+        if duration is not None:
+            end_second = start_second + duration
+            conversion_command += ["-to", str(end_second)]
 
         # If format is not defined
         # ffmpeg/avconv will detect it automatically
@@ -601,12 +608,6 @@ class AudioSegment(object):
         if parameters is not None:
             # extend arguments with arbitrary set
             conversion_command.extend(parameters)
-
-        if start_second is not None:
-            conversion_command += ["-ss", str(start_second)]
-
-        if duration is not None:
-            conversion_command += ["-t", str(duration)]
 
         conversion_command += [output.name]
 
@@ -631,14 +632,7 @@ class AudioSegment(object):
             os.unlink(input_file.name)
             os.unlink(output.name)
 
-        if start_second is None and duration is None:
-            return obj
-        elif start_second is not None and duration is None:
-            return obj[0:]
-        elif start_second is None and duration is not None:
-            return obj[:duration * 1000]
-        else:
-            return obj[0:duration * 1000]
+        return obj
 
 
     @classmethod
@@ -699,6 +693,13 @@ class AudioSegment(object):
                               '-y',  # always overwrite existing files
                               ]
 
+        if start_second is not None:
+            conversion_command += ["-ss", str(start_second)]
+
+        if duration is not None:
+            end_second = start_second + duration
+            conversion_command += ["-to", str(end_second)]
+
         # If format is not defined
         # ffmpeg/avconv will detect it automatically
         if format:
@@ -753,12 +754,6 @@ class AudioSegment(object):
             "-f", "wav"  # output options (filename last)
         ]
 
-        if start_second is not None:
-            conversion_command += ["-ss", str(start_second)]
-
-        if duration is not None:
-            conversion_command += ["-t", str(duration)]
-
         conversion_command += ["-"]
 
         log_conversion(conversion_command)
@@ -782,14 +777,8 @@ class AudioSegment(object):
         if close_file:
             file.close()
 
-        if start_second is None and duration is None:
-            return obj
-        elif start_second is not None and duration is None:
-            return obj[0:]
-        elif start_second is None and duration is not None:
-            return obj[:duration * 1000]
-        else:
-            return obj[0:duration * 1000]
+        return obj
+
 
     @classmethod
     def from_mp3(cls, file, parameters=None):
